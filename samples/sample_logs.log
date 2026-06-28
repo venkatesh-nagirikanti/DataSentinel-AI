@@ -1,0 +1,41 @@
+2026-06-28 14:32:01,098 INFO  [main] org.apache.spark.SparkContext: Running Spark version 3.3.0
+2026-06-28 14:32:01,872 INFO  [main] amazonaws.glue.GlueContext: Initializing Glue Context...
+2026-06-28 14:32:02,112 INFO  [main] org.apache.spark.sql.SparkSession: Catalog loaded. Catalog implementation: hive
+2026-06-28 14:32:05,420 INFO  [Executor-0] org.apache.spark.storage.BlockManager: BlockManager master registered
+2026-06-28 14:32:10,230 INFO  [main] user.dataset_loader: Reading CSV from s3://prod-data-lake-us-east-1/raw/transactions/2026/06/28/
+2026-06-28 14:32:15,502 INFO  [main] org.apache.spark.sql.execution.datasources.FileSourceScanExec: Planning scan with 12 files
+2026-06-28 14:32:20,381 WARN  [main] org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator: Code generation exceeded max code size. Falling back to interpreter mode.
+2026-06-28 14:32:25,910 INFO  [main] user.transformer: Executing dynamic frame transformation: mapping columns and filtering Null values.
+2026-06-28 14:32:32,150 INFO  [main] user.transformer: Schema detected: StructType(StructField(transaction_id,StringType,true), StructField(user_id,StringType,true), StructField(amount,DoubleType,true), StructField(transaction_date,StringType,true), StructField(country,StringType,true))
+2026-06-28 14:32:35,741 INFO  [main] user.transformer: Loading target staging schema...
+2026-06-28 14:32:36,290 ERROR [main] user.schema_validator: Schema Drift Detected!
+Target table `prod_analytics.staging_transactions` expects column `amount` as Decimal(10,2) and column `device_type` as StringType.
+Source dataset contains column `amount` as DoubleType and column `device_type` is missing completely.
+Column mismatch summary:
+- Missing in Source: `device_type`
+- Type Mismatch: `amount` (Source: DoubleType, Target: Decimal(10,2))
+2026-06-28 14:32:36,310 INFO  [main] org.apache.spark.SparkContext: Invoking user-defined exception handling callback
+2026-06-28 14:32:36,315 ERROR [main] org.apache.spark.deploy.yarn.ApplicationMaster: User class threw exception: org.apache.spark.sql.AnalysisException: Cannot write incompatible data to table 'prod_analytics.staging_transactions':
+- Cannot safely cast 'amount': DoubleType to DecimalType(10,2)
+- Target table requires column 'device_type', but it is missing from input.
+	at org.apache.spark.sql.catalyst.analysis.TableOutputResolver$.resolveOutputColumns(TableOutputResolver.scala:87)
+	at org.apache.spark.sql.execution.datasources.v2.DataSourceV2Strategy.apply(DataSourceV2Strategy.scala:120)
+	at org.apache.spark.sql.execution.QueryExecution.prepareForExecution(QueryExecution.scala:180)
+	at org.apache.spark.sql.execution.QueryExecution.executedPlan$lzycompute(QueryExecution.scala:165)
+	at org.apache.spark.sql.execution.QueryExecution.executedPlan(QueryExecution.scala:165)
+	at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:100)
+	at org.apache.spark.sql.DataFrameWriter.insertInto(DataFrameWriter.scala:490)
+	at glue_job.py:run_transformations(glue_job.py:48)
+	at glue_job.py:<module>(glue_job.py:90)
+2026-06-28 14:32:36,400 ERROR [main] org.apache.spark.storage.BlockManager: Memory store limit exceeded! Out of memory error during execution block creation.
+2026-06-28 14:32:36,402 ERROR [main] org.apache.spark.executor.Executor: Exception in task 0.0 in stage 3.0 (TID 12)
+java.lang.OutOfMemoryError: Java heap space
+	at org.apache.spark.util.collection.unsafe.sort.UnsafeExternalSorter.allocatePage(UnsafeExternalSorter.java:391)
+	at org.apache.spark.util.collection.unsafe.sort.UnsafeExternalSorter.insertRecord(UnsafeExternalSorter.java:411)
+	at org.apache.spark.sql.execution.UnsafeKVExternalSorter.insertRow(UnsafeKVExternalSorter.java:135)
+	at org.apache.spark.sql.execution.aggregate.BytesToBytesMap.lookup(BytesToBytesMap.java:232)
+	at org.apache.spark.sql.execution.aggregate.ObjectAggregationIterator.processInputs(ObjectAggregationIterator.scala:160)
+	at org.apache.spark.sql.execution.aggregate.ObjectAggregationIterator.<init>(ObjectAggregationIterator.scala:80)
+	at org.apache.spark.sql.execution.aggregate.ObjectHashAggregateExec.$anonfun$doExecute$1(ObjectHashAggregateExec.scala:111)
+2026-06-28 14:32:36,450 INFO  [main] org.apache.spark.SparkContext: Invoking SparkContext.stop()
+2026-06-28 14:32:36,500 ERROR [main] amazonaws.glue.GlueContext: Glue Job failed execution. Exiting with exit code 1.
