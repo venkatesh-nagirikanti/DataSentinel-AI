@@ -4,7 +4,7 @@ DataSentinel AI is an autonomous, enterprise-grade Data Incident Management syst
 
 ---
 
-## 🚀 Key Value Prop & Hackathon Highlights
+##  Key Value Prop & Hackathon Highlights
 - **Drastically Reduced MTTR:** Truncates response cycles from hours of manual database checks and log indexing down to minutes of automated AI synthesis.
 - **Demo-Ready Out-Of-The-Box:** The application features a robust demo-fallback system. If no Gemini API key is configured, the application serves detailed, pre-compiled schema validation drift mocks so judges can immediately evaluate execution paths.
 - **Clean PDF Layout Generator:** Utilizes custom layout calculations to transform raw incident details into clean, business-ready PDF documentation.
